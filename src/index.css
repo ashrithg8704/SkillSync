@@ -1,0 +1,27 @@
+/* index.css */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+  background-color: #f8f9fa; /* light background */
+}
+
+/* Optional: Center everything */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Optional: Add some spacing for global h1, p, etc */
+h1, h2, h3, p {
+  margin-bottom: 1rem;
+}
+
+/* You can add your custom classes below */
