@@ -81,7 +81,7 @@ export default function SkillSync() {
 const [selectedDomains, setSelectedDomains] = useState([]);
 const [tutors, setTutors] = useState([]);
 const [currentTutorIndex, setCurrentTutorIndex] = useState(0);
-const [swipeDirection, setSwipeDirection] = useState(null)
+const [swipeDirection, setSwipeDirection] = useState(null);
   const [userProfile, setUserProfile] = useState({
     name: "John Doe",
     image: "https://randomuser.me/api/portraits/men/1.jpg" // Default profile image
@@ -220,7 +220,83 @@ const [swipeDirection, setSwipeDirection] = useState(null)
       // Add any other logout cleanup here
     }, 1500); // 1.5 second delay for demo
   };
-
+  const TutorCard = ({ tutor, onSwipe }) => {
+    const [startX, setStartX] = useState(null);
+    const [offsetX, setOffsetX] = useState(0);
+  
+    const handleTouchStart = (e) => {
+      setStartX(e.touches[0].clientX);
+    };
+  
+    const handleTouchMove = (e) => {
+      if (!startX) return;
+      const x = e.touches[0].clientX;
+      const diff = x - startX;
+      setOffsetX(diff);
+    };
+  
+    const handleTouchEnd = () => {
+      if (offsetX > 100) {
+        onSwipe('right');
+      } else if (offsetX < -100) {
+        onSwipe('left');
+      }
+      setOffsetX(0);
+      setStartX(null);
+    };
+  
+    return (
+      <div 
+        className={`tutor-card ${swipeDirection ? `swipe-${swipeDirection}` : ''}`}
+        style={{
+          transform: `translateX(${offsetX}px) rotate(${offsetX / 20}deg)`,
+          transition: swipeDirection ? 'transform 0.5s ease-out' : 'none'
+        }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        <div className="tutor-image-container">
+          <img src={tutor.image} alt={tutor.name} className="tutor-image" />
+          <div className="rating-badge">
+            ⭐ {tutor.rating} <span className="reviews">({tutor.reviews})</span>
+          </div>
+        </div>
+        <div className="tutor-info">
+          <h3>{tutor.name}</h3>
+          <p className="bio">{tutor.bio}</p>
+          <div className="domains">
+            {tutor.domains.map((domain, i) => (
+              <span key={i} className="domain-tag">{domain}</span>
+            ))}
+          </div>
+        </div>
+        <div className="swipe-hint">
+          <span className="swipe-left">👈 Skip</span>
+          <span className="swipe-right">Connect 👉</span>
+        </div>
+      </div>
+    );
+  };
+  const handleSwipe = (direction) => {
+    setSwipeDirection(direction);
+    
+    setTimeout(() => {
+      if (direction === 'right') {
+        alert(`Connecting with ${tutors[currentTutorIndex].name}...`);
+        // Add your actual connection logic here
+      }
+      
+      if (currentTutorIndex < tutors.length - 1) {
+        setCurrentTutorIndex(currentTutorIndex + 1);
+      } else {
+        alert("No more tutors available! Try different domains.");
+        setTutors([]);
+      }
+      setSwipeDirection(null);
+    }, 500);
+  };
+  
   // Handle scroll to section
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
